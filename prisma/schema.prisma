@@ -1,54 +1,68 @@
-
 generator client {
-provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-provider = "postgresql"
-url	= env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-id	String	@id @default(cuid())
-email	String	@unique
-name	String?
-password	String
-createdAt	DateTime	@default(now()) updatedAt	DateTime	@updatedAt walletAccount WalletAccount?
-bankAccounts BankAccount[] transactions Transaction[]
+  id           String          @id @default(cuid())
+  email        String          @unique
+  name         String?
+  password     String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  walletAccount WalletAccount?
+  bankAccounts BankAccount[]
+  transactions Transaction[]
 }
 
 model WalletAccount {
-id	String	@id @default(cuid()) balance	Float	@default(0)
-userId	String	@unique
-user	User	@relation(fields: [userId], references: [id], onDelete: Cascade) createdAt	DateTime	@default(now())
-updatedAt	DateTime	@updatedAt transactions Transaction[]
+  id           String          @id @default(cuid())
+  balance      Float           @default(0)
+  userId       String          @unique
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  transactions Transaction[]
 }
 
 model BankAccount {
-id	String  @id @default(cuid())
-bankName String accountName String accountNumber String
-balance	Float	@default(0) userId	String
-user	User	@relation(fields: [userId], references: [id], onDelete: Cascade) createdAt	DateTime @default(now())
-updatedAt	DateTime @updatedAt
+  id            String    @id @default(cuid())
+  bankName      String
+  accountName   String
+  accountNumber String
+  balance       Float     @default(0)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Transaction {
-
-id	String	@id @default(cuid())
-amount	Float
-type	TransactionType
-description	String?
-status	TransactionStatus @default(PENDING) walletAccountId String
-walletAccount	WalletAccount @relation(fields: [walletAccountId], references: [id]) userId	String
-user	User	@relation(fields: [userId], references: [id]) createdAt	DateTime	@default(now())
-updatedAt	DateTime	@updatedAt
+  id              String            @id @default(cuid())
+  amount          Float
+  type            TransactionType
+  description     String?
+  status          TransactionStatus @default(PENDING)
+  walletAccountId String
+  walletAccount   WalletAccount     @relation(fields: [walletAccountId], references: [id])
+  userId          String
+  user            User              @relation(fields: [userId], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 }
 
-enum TransactionType { DEPOSIT
-WITHDRAWAL TRANSFER
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  TRANSFER
 }
 
-enum TransactionStatus { PENDING
-COMPLETED FAILED
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
 }
-
